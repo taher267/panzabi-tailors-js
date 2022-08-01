@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
+import { useExpressAuth } from "../../contexts/ExpressAuthContext";
 import Button from "../../CustomTag/Button";
 import CustomInput from "../../CustomTag/CustomInput";
 
-export default function Login() {
+export default function Login2() {
   const navigate = useNavigate();
-  const { user, login } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState();
-  const [loginInfo, setLoginInfo] = useState({ email: "", password: "" });
+  const [loginInfo, setLoginInfo] = useState({
+    email: "abutaher267@gmail.com",
+    password: "12345678",
+  });
+
+  const { login, isLoading, currentUser } = useExpressAuth();
 
   async function submitHandle(e) {
     e.preventDefault();
@@ -20,11 +24,12 @@ export default function Login() {
       try {
         setError("");
         setLoading(true);
-        await login(email, password);
-        navigate("/profile");
-      } catch ({ message }) {
+        const { success, message } = await login(email, password);
         setLoading(false);
-        setError(message);
+        if (success) return navigate("/profile");
+        return setError();
+      } catch (err) {
+        console.log(err);
       }
     }
   }
@@ -34,8 +39,8 @@ export default function Login() {
   }
 
   useEffect(() => {
-    if (user?.accessToken) return navigate("/profile");
-  }, [user?.accessToken, navigate]);
+    if (currentUser?.email) return navigate("/dashboard");
+  }, [currentUser]);
 
   return (
     <form onSubmit={submitHandle}>

@@ -16,7 +16,7 @@ export const useAuth = () => useContext(AuthContext);
 export default function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState();
-  const [error, setError] = useState();
+  // const [error, setError] = useState();
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -55,12 +55,12 @@ export default function AuthProvider({ children }) {
     const auth = getAuth();
     return signInWithEmailAndPassword(auth, email, password);
   }
-  async function logout(email, password) {
+  async function logout() {
     const auth = getAuth();
     return signOut(auth);
   }
 
-  const value = { loading, error, user, signup, login, logout };
+  const value = { user, signup, login, logout, loading };
   return (
     <AuthContext.Provider value={value}>
       {!loading && children}
